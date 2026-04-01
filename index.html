@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Jitify — Humanize Your Writing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#121212;--bg2:#181818;--bg3:#282828;--bg4:#3e3e3e;
+  --text:#ffffff;--muted:#b3b3b3;--dim:#535353;
+  --gold:#FFD700;--gold-dim:rgba(255,215,0,0.13);--gold-glow:rgba(255,215,0,0.45);
+  --green:#1DB954;--red:#e55353;
+  --radius:8px;--radius-lg:12px;
+  --font:'Nunito',sans-serif;--mono:'DM Mono',monospace;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);}
+body{display:flex;flex-direction:column;overflow-x:hidden;}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+
+/* ── TOPBAR ── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 40px;background:#000;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  position:sticky;top:0;z-index:100;
+}
+
+/* ── LOGO ── */
+.logo{display:flex;align-items:flex-end;gap:1px;user-select:none;text-decoration:none;}
+.logo-letter{
+  font-family:var(--font);font-weight:900;font-size:36px;
+  line-height:1;color:#fff;letter-spacing:-1.5px;
+  position:relative;display:inline-block;
+}
+.logo-letter.idot{color:#fff;}
+.logo-letter.idot::before{
+  content:'';position:absolute;
+  top:0px;left:50%;transform:translateX(-50%);
+  width:5px;height:5px;background:var(--gold);
+  border-radius:50%;
+  box-shadow:0 0 8px var(--gold-glow),0 0 16px var(--gold-glow);
+  animation:gPulse 2.2s ease-in-out infinite;
+}
+/* hide the font's own tittle on i */
+.logo-letter.idot{font-variant-numeric:lining-nums;line-height:0.92;}
+
+@keyframes gPulse{
+  0%,100%{box-shadow:0 0 6px var(--gold-glow);}
+  50%{box-shadow:0 0 16px var(--gold-glow),0 0 28px rgba(255,215,0,0.2);}
+}
+
+.logo-sub{
+  font-size:10px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--dim);
+  margin-left:10px;margin-bottom:7px;
+}
+
+/* ── NAV ── */
+.nav{display:flex;align-items:center;gap:8px;}
+.nav-btn{
+  font-family:var(--font);font-size:13px;font-weight:700;
+  padding:8px 20px;border-radius:20px;cursor:pointer;
+  transition:all .18s;border:none;
+}
+.nav-btn.outline{background:transparent;color:var(--muted);border:1px solid var(--bg4);}
+.nav-btn.outline:hover{color:#fff;border-color:#fff;}
+.nav-btn.gold{background:var(--gold);color:#1a1200;border:none;}
+.nav-btn.gold:hover{background:#ffe84d;transform:scale(1.03);}
+
+/* ── HERO ── */
+.hero{
+  text-align:center;padding:64px 40px 40px;
+  background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(255,215,0,0.05) 0%,transparent 70%);
+}
+.hero h1{
+  font-size:clamp(36px,5vw,64px);font-weight:900;
+  line-height:1.08;letter-spacing:-1.5px;
+  margin-bottom:16px;
+}
+.hero h1 em{font-style:normal;color:var(--gold);}
+.hero p{font-size:16px;color:var(--muted);max-width:520px;margin:0 auto 32px;line-height:1.6;}
+
+/* ── MODES ── */
+.modes{
+  display:flex;gap:8px;justify-content:center;
+  flex-wrap:wrap;margin-bottom:40px;
+}
+.mode-pill{
+  font-family:var(--font);font-size:12px;font-weight:700;
+  letter-spacing:.6px;text-transform:uppercase;
+  padding:8px 20px;border-radius:20px;cursor:pointer;
+  border:1px solid var(--bg4);background:var(--bg3);
+  color:var(--muted);transition:all .18s;
+}
+.mode-pill:hover{border-color:var(--muted);color:#fff;}
+.mode-pill.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);}
+
+/* ── MAIN GRID ── */
+.grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:20px;padding:0 40px 40px;
+  max-width:1300px;margin:0 auto;width:100%;
+}
+@media(max-width:860px){
+  .grid{grid-template-columns:1fr;padding:0 20px 40px;}
+  .topbar{padding:16px 20px;}
+  .hero{padding:40px 20px 32px;}
+}
+
+/* ── CARD ── */
+.card{
+  background:var(--bg2);border-radius:var(--radius-lg);
+  border:1px solid rgba(255,255,255,0.07);
+  overflow:hidden;display:flex;flex-direction:column;
+  transition:border-color .2s;
+}
+.card:hover{border-color:rgba(255,255,255,0.13);}
+
+.card-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;background:var(--bg3);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.card-label{
+  font-size:11px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--dim);
+  display:flex;align-items:center;gap:8px;
+}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--dim);}
+.dot.active{background:var(--green);box-shadow:0 0 7px rgba(29,185,84,.6);}
+.dot.gold{background:var(--gold);box-shadow:0 0 7px var(--gold-glow);}
+.meta{font-family:var(--mono);font-size:11px;color:var(--dim);}
+
+.card-body{padding:16px 20px;display:flex;flex-direction:column;gap:14px;flex:1;}
+
+/* ── TEXTAREA ── */
+textarea{
+  width:100%;min-height:300px;resize:vertical;
+  background:#0d0d0d;border:1px solid rgba(255,255,255,0.08);
+  border-radius:var(--radius);padding:14px 16px;
+  font-family:var(--mono);font-size:13px;line-height:1.75;
+  color:#fff;outline:none;caret-color:var(--gold);
+  transition:border-color .2s,box-shadow .2s;
+}
+textarea:focus{border-color:rgba(255,215,0,.3);box-shadow:0 0 0 3px rgba(255,215,0,.06);}
+textarea::placeholder{color:var(--dim);font-style:italic;}
+
+/* ── UPLOAD ── */
+.upload{
+  border:1px dashed rgba(255,255,255,0.15);border-radius:var(--radius);
+  padding:18px;text-align:center;cursor:pointer;
+  position:relative;transition:all .2s;
+}
+.upload:hover,.upload.over{border-color:var(--gold);background:var(--gold-dim);}
+.upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-icon{font-size:24px;margin-bottom:6px;}
+.upload-txt{font-size:13px;color:var(--muted);}
+.upload-txt strong{color:var(--gold);}
+.upload-sub{font-size:11px;color:var(--dim);margin-top:3px;font-family:var(--mono);}
+
+/* ── LIMITS BAR ── */
+.limits{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--bg3);border-radius:var(--radius);
+  padding:10px 14px;font-size:12px;
+}
+.limit-item{display:flex;align-items:center;gap:6px;color:var(--muted);}
+.limit-item span{font-family:var(--mono);font-weight:500;color:#fff;}
+.limit-item .warn{color:var(--gold);}
+.limit-item .bad{color:var(--red);}
+
+/* ── BTN HUMANIZE ── */
+.btn-go{
+  width:100%;padding:15px;
+  background:var(--gold);color:#1a1200;
+  border:none;border-radius:var(--radius);
+  font-family:var(--font);font-size:15px;font-weight:900;
+  letter-spacing:.5px;cursor:pointer;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.btn-go::after{
+  content:'';position:absolute;top:0;left:-100%;
+  width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+  transition:left .5s;
+}
+.btn-go:hover::after{left:100%;}
+.btn-go:hover{background:#ffe84d;box-shadow:0 4px 24px rgba(255,215,0,.3);transform:translateY(-1px);}
+.btn-go:disabled{background:#2a2500;color:var(--dim);cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-go:disabled::after{display:none;}
+
+/* ── OUTPUT BOX ── */
+.output-box{
+  background:#0d0d0d;border:1px solid rgba(255,255,255,0.08);
+  border-radius:var(--radius);padding:14px 16px;
+  font-family:var(--mono);font-size:13px;line-height:1.75;
+  color:#fff;min-height:300px;max-height:420px;
+  overflow-y:auto;white-space:pre-wrap;word-break:break-word;
+  flex:1;
+}
+.out-placeholder{color:var(--dim);font-style:italic;}
+.cursor{
+  display:inline-block;width:2px;height:14px;
+  background:var(--gold);vertical-align:middle;margin-left:2px;
+  box-shadow:0 0 7px var(--gold-glow);
+  animation:blink .7s step-end infinite;
+}
+@keyframes blink{50%{opacity:0;}}
+
+/* ── SHIMMER ── */
+.shim{
+  height:13px;border-radius:4px;margin-bottom:11px;
+  background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);
+  background-size:200% 100%;animation:shimmer 1.3s infinite;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── SCORE BARS ── */
+.score-wrap{
+  background:#0d0d0d;border:1px solid rgba(255,255,255,0.08);
+  border-radius:var(--radius);padding:14px 16px;
+}
+.score-title{
+  font-size:10px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--dim);margin-bottom:12px;
+}
+.det-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.det-name{font-size:11px;font-family:var(--mono);color:var(--muted);width:108px;flex-shrink:0;}
+.bar-track{flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;}
+.bar-fill{height:100%;width:0%;border-radius:2px;background:var(--green);
+  box-shadow:0 0 6px rgba(29,185,84,.5);transition:width 1.1s cubic-bezier(.4,0,.2,1);}
+.det-val{font-size:11px;font-family:var(--mono);font-weight:500;color:var(--green);width:32px;text-align:right;}
+.det-placeholder{font-size:12px;color:var(--dim);font-family:var(--mono);font-style:italic;}
+
+/* ── ACTION ROW ── */
+.actions{display:flex;gap:8px;}
+.btn-sm{
+  flex:1;padding:10px 14px;
+  background:transparent;color:var(--muted);
+  border:1px solid var(--bg4);border-radius:var(--radius);
+  font-family:var(--font);font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .18s;
+}
+.btn-sm:hover{background:var(--bg3);color:#fff;border-color:var(--bg4);}
+.btn-sm:disabled{opacity:.3;cursor:not-allowed;}
+.btn-dl{
+  flex:2;padding:10px 14px;
+  background:transparent;color:var(--gold);
+  border:1px solid var(--gold);border-radius:var(--radius);
+  font-family:var(--font);font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .18s;
+}
+.btn-dl:hover{background:var(--gold-dim);box-shadow:0 0 16px rgba(255,215,0,.2);}
+.btn-dl:disabled{opacity:.3;cursor:not-allowed;border-color:var(--dim);color:var(--dim);}
+
+/* ── MODAL (FREE API GUIDE) ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.85);
+  display:flex;align-items:center;justify-content:center;
+  z-index:999;opacity:0;pointer-events:none;
+  transition:opacity .25s;padding:20px;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--bg2);border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--radius-lg);max-width:560px;width:100%;
+  max-height:90vh;overflow-y:auto;padding:32px;
+  transform:translateY(20px);transition:transform .25s;
+}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal h2{
+  font-size:22px;font-weight:900;margin-bottom:6px;
+  display:flex;align-items:center;gap:10px;
+}
+.modal h2 .badge{
+  font-size:10px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;background:var(--gold-dim);
+  color:var(--gold);border:1px solid var(--gold);
+  padding:3px 10px;border-radius:20px;
+}
+.modal-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6;}
+.step{
+  display:flex;gap:14px;margin-bottom:20px;
+  padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.step:last-of-type{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-num{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  background:var(--gold);color:#1a1200;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;margin-top:1px;
+}
+.step-body h3{font-size:14px;font-weight:700;margin-bottom:4px;}
+.step-body p{font-size:13px;color:var(--muted);line-height:1.6;}
+.step-body a{color:var(--gold);text-decoration:none;}
+.step-body a:hover{text-decoration:underline;}
+.step-body code{
+  font-family:var(--mono);font-size:12px;
+  background:var(--bg3);padding:2px 7px;border-radius:4px;color:#fff;
+}
+.modal-close{
+  width:100%;margin-top:24px;padding:13px;
+  background:var(--gold);color:#1a1200;border:none;
+  border-radius:var(--radius);font-family:var(--font);
+  font-size:14px;font-weight:900;cursor:pointer;transition:all .18s;
+}
+.modal-close:hover{background:#ffe84d;}
+
+/* ── API KEY INPUT BAR ── */
+.api-bar{
+  max-width:1300px;margin:0 auto;
+  padding:0 40px 20px;width:100%;
+}
+@media(max-width:860px){.api-bar{padding:0 20px 20px;}}
+.api-wrap{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg2);border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--radius);padding:10px 16px;
+}
+.api-wrap label{
+  font-size:11px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--dim);white-space:nowrap;
+}
+.api-wrap input{
+  flex:1;background:transparent;border:none;outline:none;
+  font-family:var(--mono);font-size:13px;color:var(--gold);
+  caret-color:var(--gold);
+}
+.api-wrap input::placeholder{color:var(--dim);}
+.api-status{
+  font-size:11px;font-family:var(--mono);font-weight:500;
+  white-space:nowrap;color:var(--dim);
+}
+.api-status.ok{color:var(--green);}
+.api-status.bad{color:var(--red);}
+.btn-guide{
+  font-family:var(--font);font-size:12px;font-weight:700;
+  padding:6px 14px;border-radius:20px;cursor:pointer;
+  background:var(--gold-dim);color:var(--gold);
+  border:1px solid var(--gold);transition:all .18s;white-space:nowrap;
+}
+.btn-guide:hover{background:rgba(255,215,0,.22);}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:28px;left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--bg3);border:1px solid rgba(255,255,255,.12);
+  color:#fff;padding:10px 22px;border-radius:40px;
+  font-size:13px;font-weight:600;font-family:var(--font);
+  opacity:0;pointer-events:none;z-index:9999;
+  transition:all .22s;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.gold-toast{border-color:var(--gold);color:var(--gold);}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="logo" href="#">
+    <span class="logo-letter plain">J</span><span class="logo-letter idot">i</span><span class="logo-letter plain">t</span><span class="logo-letter idot">i</span><span class="logo-letter plain">f</span><span class="logo-letter plain">y</span>
+    <span class="logo-sub">Humanizer</span>
+  </a>
+  <nav class="nav">
+    <button class="nav-btn outline" onclick="openGuide()">Get Free API Key</button>
+  </nav>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Write like a <em>human.</em><br/>Not a machine.</h1>
+  <p>Paste or upload your text. Jitify rewrites it with natural rhythm, varied structure, and authentic voice.</p>
+  <div class="modes">
+    <button class="mode-pill active" data-mode="standard">Standard</button>
+    <button class="mode-pill" data-mode="aggressive">Aggressive</button>
+    <button class="mode-pill" data-mode="academic">Academic</button>
+    <button class="mode-pill" data-mode="casual">Casual</button>
+  </div>
+</div>
+
+<!-- API BAR -->
+<div class="api-bar">
+  <div class="api-wrap">
+    <label>Groq API Key</label>
+    <input type="password" id="apiKey" placeholder="gsk_…   (free at console.groq.com)" autocomplete="off"/>
+    <span class="api-status" id="apiStatus">not set</span>
+    <button class="btn-guide" onclick="openGuide()">How to get it free →</button>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="grid">
+
+  <!-- INPUT CARD -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-label"><span class="dot" id="inDot"></span>Input</div>
+      <span class="meta" id="charCount">0 / 50,000 chars</span>
+    </div>
+    <div class="card-body">
+      <textarea id="inputText" placeholder="Paste your AI-generated text here…&#10;&#10;Supports up to 50,000 characters per document."></textarea>
+      <div class="upload" id="uploadZone">
+        <input type="file" id="fileInput" accept=".txt,.docx"/>
+        <div class="upload-icon">⬆</div>
+        <div class="upload-txt"><strong>Upload a file</strong> or drag and drop</div>
+        <div class="upload-sub">.txt · .docx · max 50,000 chars</div>
+      </div>
+      <div class="limits">
+        <div class="limit-item">Uploads remaining: <span id="uploadsLeft">5</span></div>
+        <div class="limit-item">Session: <span id="sessionTimer">—</span></div>
+      </div>
+      <button class="btn-go" id="goBtn" onclick="humanize()">⚡ Humanize</button>
+    </div>
+  </div>
+
+  <!-- OUTPUT CARD -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-label"><span class="dot gold" id="outDot" style="background:var(--dim);box-shadow:none;"></span>Output</div>
+      <span class="meta" id="outMeta"></span>
+    </div>
+    <div class="card-body">
+      <div class="output-box" id="outputBox">
+        <span class="out-placeholder">Your humanized text will appear here…</span>
+      </div>
+      <div class="score-wrap">
+        <div class="score-title">Humanness Score — Simulated Detector Check</div>
+        <div id="detBars"><div class="det-placeholder">Run humanization to see scores</div></div>
+      </div>
+      <div class="actions">
+        <button class="btn-sm" id="copyBtn" onclick="copyOut()" disabled>Copy</button>
+        <button class="btn-sm" id="reBtn" onclick="reHumanize()" disabled>Re-run</button>
+        <button class="btn-dl" id="dlBtn" onclick="downloadOut()" disabled>↓ Download .txt</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FREE API GUIDE MODAL -->
+<div class="modal-overlay" id="guideModal">
+  <div class="modal">
+    <h2>Get Your Free API Key <span class="badge">100% Free</span></h2>
+    <p class="modal-sub">Groq gives you a generous free tier — no credit card needed. Takes about 2 minutes.</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Go to Groq Console</h3>
+        <p>Visit <a href="https://console.groq.com" target="_blank">console.groq.com</a> and click <strong>Sign Up</strong>. You can sign up with Google or GitHub — no credit card required.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Create an API Key</h3>
+        <p>After logging in, go to <strong>API Keys</strong> in the left sidebar. Click <strong>Create API Key</strong>, give it any name (e.g. "Jitify"), then copy the key — it starts with <code>gsk_</code>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Paste it into Jitify</h3>
+        <p>Paste your key into the <strong>Groq API Key</strong> bar at the top of the page. The status dot will turn green and you're ready to humanize.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Free Tier Limits</h3>
+        <p>Groq's free tier includes <strong>~14,400 requests/day</strong> on Llama 3 models — more than enough for heavy daily use. No expiry.</p>
+      </div>
+    </div>
+
+    <button class="modal-close" onclick="closeGuide()">Got it — Let's Humanize</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   JITIFY — CORE ENGINE
+   ═══════════════════════════════════════════════ */
+
+// ── Config ──
+const WORKER_URL = https://jitify.anujitcj13.workers.dev; // e.g. https://jitify.yourname.workers.dev
+const MAX_CHARS  = 50000;
+const MAX_UPLOADS_PER_SESSION = 5;
+
+// ── State ──
+let currentMode   = 'standard';
+let outputText    = '';
+let uploadsLeft   = MAX_UPLOADS_PER_SESSION;
+let sessionStart  = null;
+let sessionTimer  = null;
+
+// ── Mode pills ──
+document.querySelectorAll('.mode-pill').forEach(p => {
+  p.addEventListener('click', function(){
+    document.querySelectorAll('.mode-pill').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+    currentMode = this.dataset.mode;
+  });
+});
+
+// ── API key watcher ──
+const apiKeyEl   = document.getElementById('apiKey');
+const apiStatus  = document.getElementById('apiStatus');
+apiKeyEl.addEventListener('input', function(){
+  const v = this.value.trim();
+  if(v.startsWith('gsk_') && v.length > 20){
+    apiStatus.textContent = '● connected';
+    apiStatus.className   = 'api-status ok';
+  } else if(v.length > 0){
+    apiStatus.textContent = 'invalid key';
+    apiStatus.className   = 'api-status bad';
+  } else {
+    apiStatus.textContent = 'not set';
+    apiStatus.className   = 'api-status';
+  }
+});
+
+// ── Char counter ──
+const inputEl = document.getElementById('inputText');
+inputEl.addEventListener('input', updateCharCount);
+function updateCharCount(){
+  const n = inputEl.value.length;
+  const el = document.getElementById('charCount');
+  el.textContent = n.toLocaleString() + ' / ' + MAX_CHARS.toLocaleString() + ' chars';
+  el.style.color = n > MAX_CHARS ? 'var(--red)' : n > MAX_CHARS*0.85 ? 'var(--gold)' : '';
+  document.getElementById('inDot').style.background = n > 0 ? 'var(--gold)' : '';
+}
+
+// ── File upload ──
+const uploadZone = document.getElementById('uploadZone');
+const fileInput  = document.getElementById('fileInput');
+uploadZone.addEventListener('dragover', e=>{e.preventDefault();uploadZone.classList.add('over');});
+uploadZone.addEventListener('dragleave', ()=>uploadZone.classList.remove('over'));
+uploadZone.addEventListener('drop', e=>{
+  e.preventDefault(); uploadZone.classList.remove('over');
+  if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e=>{ if(e.target.files[0]) handleFile(e.target.files[0]); });
+
+function handleFile(file){
+  if(uploadsLeft <= 0){ toast('⚠ Upload limit reached for this session',''); return; }
+  const ext = file.name.split('.').pop().toLowerCase();
+  if(ext === 'txt'){
+    const r = new FileReader();
+    r.onload = e=>{
+      const txt = e.target.result;
+      if(txt.length > MAX_CHARS){ toast('⚠ File exceeds 50,000 character limit',''); return; }
+      inputEl.value = txt;
+      updateCharCount();
+      uploadsLeft--;
+      document.getElementById('uploadsLeft').textContent = uploadsLeft;
+      if(!sessionStart) startSession();
+      toast('✓ Loaded: ' + file.name,'gold-toast');
+    };
+    r.readAsText(file);
+  } else if(ext === 'docx'){
+    loadMammoth(()=>{
+      const r = new FileReader();
+      r.onload = e=>{
+        mammoth.extractRawText({arrayBuffer: e.target.result})
+          .then(res=>{
+            if(res.value.length > MAX_CHARS){ toast('⚠ File exceeds 50,000 character limit',''); return; }
+            inputEl.value = res.value;
+            updateCharCount();
+            uploadsLeft--;
+            document.getElementById('uploadsLeft').textContent = uploadsLeft;
+            if(!sessionStart) startSession();
+            toast('✓ Loaded: ' + file.name,'gold-toast');
+          });
+      };
+      r.readAsArrayBuffer(file);
+    });
+  } else {
+    toast('⚠ Only .txt and .docx supported','');
+  }
+}
+
+function loadMammoth(cb){
+  if(window.mammoth){ cb(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+  s.onload = cb;
+  document.head.appendChild(s);
+}
+
+// ── Session timer (1hr) ──
+function startSession(){
+  sessionStart = Date.now();
+  const endTime = sessionStart + 3600000;
+  sessionTimer = setInterval(()=>{
+    const left = endTime - Date.now();
+    if(left <= 0){
+      clearInterval(sessionTimer);
+      inputEl.value = '';
+      outputText = '';
+      document.getElementById('outputBox').innerHTML = '<span class="out-placeholder">Session expired. Upload again to continue.</span>';
+      document.getElementById('sessionTimer').textContent = 'Expired';
+      updateCharCount();
+      return;
+    }
+    const m = Math.floor(left/60000);
+    const s = Math.floor((left%60000)/1000);
+    document.getElementById('sessionTimer').textContent = m+'m '+s+'s';
+  }, 1000);
+}
+
+// ── Main humanize ──
+async function humanize(){
+  const apiKey = apiKeyEl.value.trim();
+  const text   = inputEl.value.trim();
+
+  if(!apiKey){ openGuide(); return; }
+  if(!text){ toast('⚠ Please enter some text first',''); return; }
+  if(text.length > MAX_CHARS){ toast('⚠ Text exceeds 50,000 character limit',''); return; }
+
+  const btn = document.getElementById('goBtn');
+  btn.disabled = true; btn.textContent = '⏳ Humanizing…';
+  outputText = '';
+  document.getElementById('copyBtn').disabled = true;
+  document.getElementById('reBtn').disabled   = true;
+  document.getElementById('dlBtn').disabled   = true;
+  document.getElementById('outMeta').textContent = '';
+  resetDet();
+
+  // Shimmer
+  const box = document.getElementById('outputBox');
+  box.innerHTML = [90,75,85,55,95,68,80].map(w=>`<div class="shim" style="width:${w}%"></div>`).join('');
+  document.getElementById('outDot').style.cssText = 'background:var(--gold);box-shadow:0 0 7px var(--gold-glow);';
+
+  try {
+    const res = await fetch(WORKER_URL + '/humanize', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ text, mode: currentMode, apiKey })
+    });
+
+    if(!res.ok){
+      const e = await res.json().catch(()=>({}));
+      throw new Error(e.error || 'Worker error ' + res.status);
+    }
+
+    // Stream response
+    box.innerHTML = '';
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    box.appendChild(cursor);
+
+    const reader  = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+
+    while(true){
+      const {done, value} = await reader.read();
+      if(done) break;
+      buf += decoder.decode(value, {stream:true});
+      const lines = buf.split('\n');
+      buf = lines.pop();
+      for(const line of lines){
+        if(!line.startsWith('data: ')) continue;
+        const d = line.slice(6).trim();
+        if(d === '[DONE]') continue;
+        try{
+          const p = JSON.parse(d);
+          if(p.text){
+            outputText += p.text;
+            box.removeChild(cursor);
+            box.textContent = outputText;
+            box.appendChild(cursor);
+            box.scrollTop = box.scrollHeight;
+          }
+        } catch(e){}
+      }
+    }
+
+    box.removeChild(cursor);
+    box.textContent = outputText;
+    document.getElementById('outMeta').textContent = outputText.length.toLocaleString() + ' chars';
+    document.getElementById('copyBtn').disabled = false;
+    document.getElementById('reBtn').disabled   = false;
+    document.getElementById('dlBtn').disabled   = false;
+    animateDet();
+    toast('✓ Done — text humanized','gold-toast');
+
+  } catch(err){
+    box.innerHTML = `<span style="color:var(--red)">Error: ${err.message}</span>`;
+    toast('⚠ ' + err.message,'');
+  }
+
+  btn.disabled = false; btn.textContent = '⚡ Humanize';
+}
+
+// ── Re-humanize ──
+function reHumanize(){
+  if(!outputText) return;
+  inputEl.value = outputText;
+  updateCharCount();
+  humanize();
+}
+
+// ── Detectors ──
+const DETS = ['GPTZero','Originality.ai','Turnitin','Copyleaks','Winston AI'];
+function resetDet(){
+  const c = document.getElementById('detBars');
+  c.innerHTML = '';
+  DETS.forEach(name=>{
+    const k = name.replace(/[\.\s]/g,'-');
+    const row = document.createElement('div');
+    row.className = 'det-row';
+    row.innerHTML = `<span class="det-name">${name}</span>
+      <div class="bar-track"><div class="bar-fill" id="b-${k}"></div></div>
+      <span class="det-val" id="s-${k}">—</span>`;
+    c.appendChild(row);
+  });
+}
+function animateDet(){
+  const base = {standard:[94,92,95,93,91],aggressive:[97,96,98,96,95],academic:[91,90,93,90,89],casual:[98,97,99,97,96]};
+  const b = base[currentMode];
+  DETS.forEach((name,i)=>{
+    const score = Math.min(99,Math.max(88, b[i] + Math.floor(Math.random()*3)-1));
+    const k = name.replace(/[\.\s]/g,'-');
+    setTimeout(()=>{
+      const bar = document.getElementById('b-'+k);
+      const val = document.getElementById('s-'+k);
+      if(bar) bar.style.width = score+'%';
+      if(val){ val.textContent = score+'%'; }
+    }, i*170+300);
+  });
+}
+
+// ── Copy / Download ──
+function copyOut(){
+  if(!outputText) return;
+  navigator.clipboard.writeText(outputText).then(()=>toast('✓ Copied','gold-toast'));
+}
+function downloadOut(){
+  if(!outputText) return;
+  const b = new Blob([outputText],{type:'text/plain;charset=utf-8'});
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href=u; a.download='jitify-output.txt';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(u);
+  toast('✓ Downloaded','gold-toast');
+}
+
+// ── Modal ──
+function openGuide(){ document.getElementById('guideModal').classList.add('open'); }
+function closeGuide(){ document.getElementById('guideModal').classList.remove('open'); }
+document.getElementById('guideModal').addEventListener('click',function(e){ if(e.target===this) closeGuide(); });
+
+// ── Toast ──
+function toast(msg, cls){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (cls||'');
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
