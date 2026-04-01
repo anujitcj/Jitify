@@ -323,10 +323,25 @@ textarea::placeholder{color:var(--dim);font-style:italic;}
   <h1>Write like a <em>human.</em><br/>Not a machine.</h1>
   <p>Paste or upload your text. Jitify rewrites it with natural rhythm, varied structure, and authentic voice.</p>
   <div class="modes">
-    <button class="mode-pill active" data-mode="standard">Standard</button>
-    <button class="mode-pill" data-mode="aggressive">Aggressive</button>
-    <button class="mode-pill" data-mode="academic">Academic</button>
-    <button class="mode-pill" data-mode="casual">Casual</button>
+   <button class="mode-pill active"
+        data-mode="standard"
+        title="Balanced rewrite with natural rhythm and moderate changes">
+Standard</button>
+
+<button class="mode-pill"
+        data-mode="aggressive"
+        title="Strong rewrite with high variation, personality, and structure changes">
+Aggressive</button>
+
+<button class="mode-pill"
+        data-mode="academic"
+        title="Formal scholarly tone suitable for essays and research writing">
+Academic</button>
+
+<button class="mode-pill"
+        data-mode="casual"
+        title="Conversational tone like a blog post or message to a friend">
+Casual</button>
   </div>
 </div>
 
@@ -364,10 +379,6 @@ textarea::placeholder{color:var(--dim);font-style:italic;}
     <div class="card-body">
       <div class="output-box" id="outputBox">
         <span class="out-placeholder">Your humanized text will appear here…</span>
-      </div>
-      <div class="score-wrap">
-        <div class="score-title">Humanness Score — Simulated Detector Check</div>
-        <div id="detBars"><div class="det-placeholder">Run humanization to see scores</div></div>
       </div>
       <div class="actions">
         <button class="btn-sm" id="copyBtn" onclick="copyOut()" disabled>Copy</button>
