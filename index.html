@@ -573,9 +573,10 @@ async function humanize(){
     toast('✓ Done — text humanized','gold-toast');
 
   } catch(err){
-    box.innerHTML = `<span style="color:var(--red)">Error: ${err.message}</span>`;
-    toast('⚠ ' + err.message,'');
-  }
+  console.error(err);
+  box.innerHTML = `<span style="color:var(--red)">Error: ${err.message}</span>`;
+  toast('⚠ ' + err.message,'');
+}
 
   btn.disabled = false; btn.textContent = '⚡ Humanize';
 }
