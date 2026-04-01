@@ -548,13 +548,17 @@ async function humanize(){
         if(d === '[DONE]') continue;
         try{
           const p = JSON.parse(d);
-          if(p.text){
-            outputText += p.text;
-            box.removeChild(cursor);
-            box.textContent = outputText;
-            box.appendChild(cursor);
-            box.scrollTop = box.scrollHeight;
-          }
+         if(p.text){
+  outputText += p.text;
+
+  if(cursor.parentNode){
+    cursor.parentNode.removeChild(cursor);
+  }
+
+  box.textContent = outputText;
+  box.appendChild(cursor);
+  box.scrollTop = box.scrollHeight;
+}
         } catch(e){}
       }
     }
