@@ -518,7 +518,7 @@ async function humanize(){
   document.getElementById('reBtn').disabled   = true;
   document.getElementById('dlBtn').disabled   = true;
   document.getElementById('outMeta').textContent = '';
-  resetDet();
+
 
   // Shimmer
   const box = document.getElementById('outputBox');
@@ -580,7 +580,7 @@ async function humanize(){
     document.getElementById('copyBtn').disabled = false;
     document.getElementById('reBtn').disabled   = false;
     document.getElementById('dlBtn').disabled   = false;
-    animateDet();
+ 
     toast('✓ Done — text humanized','gold-toast');
 
   } catch(err){
@@ -598,36 +598,6 @@ function reHumanize(){
   inputEl.value = outputText;
   updateCharCount();
   humanize();
-}
-
-// ── Detectors ──
-const DETS = ['GPTZero','Originality.ai','Turnitin','Copyleaks','Winston AI'];
-function resetDet(){
-  const c = document.getElementById('detBars');
-  c.innerHTML = '';
-  DETS.forEach(name=>{
-    const k = name.replace(/[\.\s]/g,'-');
-    const row = document.createElement('div');
-    row.className = 'det-row';
-    row.innerHTML = `<span class="det-name">${name}</span>
-      <div class="bar-track"><div class="bar-fill" id="b-${k}"></div></div>
-      <span class="det-val" id="s-${k}">—</span>`;
-    c.appendChild(row);
-  });
-}
-function animateDet(){
-  const base = {standard:[94,92,95,93,91],aggressive:[97,96,98,96,95],academic:[91,90,93,90,89],casual:[98,97,99,97,96]};
-  const b = base[currentMode];
-  DETS.forEach((name,i)=>{
-    const score = Math.min(99,Math.max(88, b[i] + Math.floor(Math.random()*3)-1));
-    const k = name.replace(/[\.\s]/g,'-');
-    setTimeout(()=>{
-      const bar = document.getElementById('b-'+k);
-      const val = document.getElementById('s-'+k);
-      if(bar) bar.style.width = score+'%';
-      if(val){ val.textContent = score+'%'; }
-    }, i*170+300);
-  });
 }
 
 // ── Copy / Download ──
