@@ -634,11 +634,6 @@ function downloadOut(){
   toast('✓ Downloaded','gold-toast');
 }
 
-// ── Modal ──
-function openGuide(){ document.getElementById('guideModal').classList.add('open'); }
-function closeGuide(){ document.getElementById('guideModal').classList.remove('open'); }
-document.getElementById('guideModal').addEventListener('click',function(e){ if(e.target===this) closeGuide(); });
-
 // ── Toast ──
 function toast(msg, cls){
   const t = document.getElementById('toast');
