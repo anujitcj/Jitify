@@ -379,47 +379,6 @@ textarea::placeholder{color:var(--dim);font-style:italic;}
 
 </div>
 
-<!-- FREE API GUIDE MODAL -->
-<div class="modal-overlay" id="guideModal">
-  <div class="modal">
-    <h2>Get Your Free API Key <span class="badge">100% Free</span></h2>
-    <p class="modal-sub">Groq gives you a generous free tier — no credit card needed. Takes about 2 minutes.</p>
-
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <h3>Go to Groq Console</h3>
-        <p>Visit <a href="https://console.groq.com" target="_blank">console.groq.com</a> and click <strong>Sign Up</strong>. You can sign up with Google or GitHub — no credit card required.</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <h3>Create an API Key</h3>
-        <p>After logging in, go to <strong>API Keys</strong> in the left sidebar. Click <strong>Create API Key</strong>, give it any name (e.g. "Jitify"), then copy the key — it starts with <code>gsk_</code>.</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <h3>Paste it into Jitify</h3>
-        <p>Paste your key into the <strong>Groq API Key</strong> bar at the top of the page. The status dot will turn green and you're ready to humanize.</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-body">
-        <h3>Free Tier Limits</h3>
-        <p>Groq's free tier includes <strong>~14,400 requests/day</strong> on Llama 3 models — more than enough for heavy daily use. No expiry.</p>
-      </div>
-    </div>
-
-    <button class="modal-close" onclick="closeGuide()">Got it — Let's Humanize</button>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
 <script>
 /* ═══════════════════════════════════════════════
    JITIFY — CORE ENGINE
